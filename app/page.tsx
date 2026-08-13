@@ -25,7 +25,7 @@ export default function HomePage() {
               className="absolute inset-0"
             >
               <Image
-                src="/images/hero/BPSBattingGlove.PNG"
+                src="/images/hero/HomePageGlove1.png"
                 alt="Ballerz Pro Series Glove"
                 fill
                 className="object-cover scale-90"
