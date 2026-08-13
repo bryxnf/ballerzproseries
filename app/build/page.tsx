@@ -18,9 +18,9 @@ import {
 } from "../../lib/glove-options";
 
 const sizeOptionsByModel: Record<string, string[]> = {
-  Fielder: ["10.25", "11.0", "11.25", "11.5", "11.75", "12.0"],
-  "1B Open Back": ["12.5", "12.75", "13.0"],
-  "1B Closed Back": ["12.5", "12.75", "13.0"],
+  Fielder: ["10.25", "11.0", "11.25", "11.5", "11.75", "12.0", "12.25", "12.5", "12.75", "13.0", "13.25", "13.5", "13.75", "14.0"],
+  "1B Open Back": ["12.5", "12.75", "13.0", "13.25", "13.5", "13.75", "14.0"],
+  "1B Closed Back": ["12.5", "12.75", "13.0", "13.25", "13.5", "13.75", "14.0"],
   "Baseball Catcher": ["32.5", "33.0", "33.5"],
   "Softball Catcher": ["33.0", "34.0"],
 };
@@ -82,31 +82,31 @@ export default function BuildPage() {
   const [embroideryColor, setEmbroideryColor] = useState("White");
 
   const [outerPalmColor, setOuterPalmColor] = useState("White");
-  const [outerThumbColor, setOuterThumbColor] = useState("Black");
-  const [outerIndexColor, setOuterIndexColor] = useState("Black");
-  const [outerMiddleColor, setOuterMiddleColor] = useState("Black");
-  const [outerRingColor, setOuterRingColor] = useState("Black");
-  const [outerPinkyColor, setOuterPinkyColor] = useState("Black");
-  const [wristColor, setWristColor] = useState("Red");
+  const [outerThumbColor, setOuterThumbColor] = useState("White");
+  const [outerIndexColor, setOuterIndexColor] = useState("White");
+  const [outerMiddleColor, setOuterMiddleColor] = useState("White");
+  const [outerRingColor, setOuterRingColor] = useState("White");
+  const [outerPinkyColor, setOuterPinkyColor] = useState("White");
+  const [wristColor, setWristColor] = useState("White");
 
-  const [palmColor, setPalmColor] = useState("Tan"); 
-  const [innerThumbColor, setInnerThumbColor] = useState("Tan");
-  const [innerIndexColor, setInnerIndexColor] = useState("Tan");
-  const [innerMiddleColor, setInnerMiddleColor] = useState("Tan");
-  const [innerRingColor, setInnerRingColor] = useState("Tan");
-  const [innerPinkyColor, setInnerPinkyColor] = useState("Tan");
+  const [palmColor, setPalmColor] = useState("White"); 
+  const [innerThumbColor, setInnerThumbColor] = useState("White");
+  const [innerIndexColor, setInnerIndexColor] = useState("White");
+  const [innerMiddleColor, setInnerMiddleColor] = useState("White");
+  const [innerRingColor, setInnerRingColor] = useState("White");
+  const [innerPinkyColor, setInnerPinkyColor] = useState("White");
 
-  const [laceColor, setLaceColor] = useState("Black");
-  const [webColor, setWebColor] = useState("Black");
-  const [bindingColor, setBindingColor] = useState("Red");
+  const [laceColor, setLaceColor] = useState("White");
+  const [webColor, setWebColor] = useState("White");
+  const [bindingColor, setBindingColor] = useState("White");
   const [weltingColor, setWeltingColor] = useState("White");
 
   const [isAdding, setIsAdding] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [patchColor, setPatchColor] = useState("Black");
-  const [palmLogoColor, setPalmLogoColor] = useState("Gold");
-  const [logoColor, setLogoColor] = useState("Gold");
+  const [patchColor, setPatchColor] = useState("White");
+  const [palmLogoColor, setPalmLogoColor] = useState("White");
+  const [logoColor, setLogoColor] = useState("White");
 
   const selectedSeries = useMemo(
     () => seriesOptions.find((option) => option.name === series),
@@ -118,6 +118,7 @@ export default function BuildPage() {
   }, [model]);
 
   const price = selectedSeries?.price ?? 189;
+  const canAddEmbroidery = price === 229;
 
   async function handleAddToCart() {
     try {
@@ -156,8 +157,13 @@ export default function BuildPage() {
         palmLogoColor,
         logoColor,
 
-        embroideryText: embroideryText || "None",
-        embroideryColor,
+        embroideryText: canAddEmbroidery
+          ? embroideryText || "None"
+          : "Not Available",
+
+        embroideryColor: canAddEmbroidery
+          ? embroideryColor
+          : "Not Available",
       };
 
        await new Promise<void>((resolve) => {
@@ -329,30 +335,48 @@ export default function BuildPage() {
                 </BuilderGroup>
 
                 <BuilderGroup title="Step 4 — Personalization">
-                  <Field label="Embroidery Text">
-                    <input
-                      type="text"
-                      maxLength={12}
-                      value={embroideryText}
-                      onChange={(e) => setEmbroideryText(e.target.value)}
-                      placeholder="Enter name or word"
-                      className="w-full rounded-2xl border border-neutral-700 bg-black px-4 py-3 outline-none"
-                    />
-                  </Field>
+                  {canAddEmbroidery ? (
+                    <>
+                      <Field label="Embroidery Text">
+                        <input
+                          type="text"
+                          maxLength={12}
+                          value={embroideryText}
+                          onChange={(e) =>
+                            setEmbroideryText(e.target.value)
+                          }
+                          placeholder="Enter name or word"
+                          className="w-full rounded-2xl border border-neutral-700 bg-black px-4 py-3 outline-none"
+                        />
+                      </Field>
 
-                  <Field label="Embroidery Color">
-                    <select
-                      value={embroideryColor}
-                      onChange={(e) => setEmbroideryColor(e.target.value)}
-                      className="w-full rounded-2xl border border-neutral-700 bg-black px-4 py-3 outline-none"
-                    >
-                      {embroideryColorOptions.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
+                      <Field label="Embroidery Color">
+                        <select
+                          value={embroideryColor}
+                          onChange={(e) =>
+                            setEmbroideryColor(e.target.value)
+                          }
+                          className="w-full rounded-2xl border border-neutral-700 bg-black px-4 py-3 outline-none"
+                        >
+                          {embroideryColorOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                    </>
+                  ) : (
+                    <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
+                      <p className="font-medium text-white">
+                        Embroidery is included with the $229 custom series.
+                      </p>
+
+                      <p className="mt-2 text-sm text-neutral-400">
+                        Select the $229 series to add personalized embroidery.
+                      </p>
+                    </div>
+                  )}
                 </BuilderGroup>
               </div>
             </section>
@@ -406,6 +430,19 @@ export default function BuildPage() {
                 <PreviewChip label="Patch" value={patchColor} />
                 <PreviewChip label="Palm Logo" value={palmLogoColor} />
                 <PreviewChip label="Logo" value={logoColor} />
+                {canAddEmbroidery ? (
+                  <>
+                    <PreviewChip
+                      label="Embroidery"
+                      value={embroideryText || "None"}
+                    />
+
+                    <PreviewChip
+                      label="Embroidery Color"
+                      value={embroideryText ? embroideryColor : "None"}
+                    />
+                  </>
+                ) : null}
               </div>
 
               <div className="mt-8 rounded-2xl border border-neutral-800 bg-neutral-950 p-5">

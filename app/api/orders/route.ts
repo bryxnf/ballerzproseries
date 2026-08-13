@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "../../../lib/supabase/admin";
+import { sendOrderConfirmation } from "../../../lib/email";
 
 type CartItem = {
   id: string;
@@ -257,6 +258,24 @@ export async function POST(request: Request) {
         },
         { status: 500 }
       );
+    }
+
+    if (body.customerEmail) {
+      try {
+        await sendOrderConfirmation({
+          customerEmail: body.customerEmail,
+          customerName: body.customerName,
+          orderNumber: order.order_number,
+          total,
+        });
+      } catch (emailError) {
+        console.error(
+          "Order confirmation email failed:",
+          emailError
+        );
+
+        // Do NOT fail the order just because the email failed.
+      }
     }
 
     return NextResponse.json({
