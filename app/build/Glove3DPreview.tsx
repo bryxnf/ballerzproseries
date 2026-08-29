@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Center, OrbitControls, useGLTF, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
-import { colorMap } from "../../lib/glove-options";
+import { colorMap, getGloveModelPath } from "../../lib/glove-options";
 
 type Glove3DPreviewProps = {
+  webStyle: string;
+
   outerPalmColor: string;
   outerThumbColor: string;
   outerIndexColor: string;
@@ -32,6 +34,8 @@ type Glove3DPreviewProps = {
 };
 
 function GloveModel({
+  webStyle,
+
   outerPalmColor,
   outerThumbColor,
   outerIndexColor,
@@ -56,10 +60,21 @@ function GloveModel({
   logoColor,
 
 }: Glove3DPreviewProps) {
-  const { scene, materials } = useGLTF("/models/BPSGlove1.glb");
+  /*
+   * Most web styles are a recolor of the same glove mesh, but a style
+   * like Basket Web needs completely different geometry, so it loads
+   * its own GLB. Every other color choice below is reapplied to
+   * whichever model loads here, so switching nets never loses the
+   * rest of the customization.
+   */
+  const modelPath = getGloveModelPath(webStyle);
+  const { scene, materials } = useGLTF(modelPath);
 
   useEffect(() => {
-    console.log("GLB materials:", Object.keys(materials));
+    console.log(
+      `GLB materials (${modelPath}):`,
+      Object.keys(materials)
+    );
 
     const setMaterialColor = (materialName: string, colorName: string) => {
       const material = materials[materialName] as THREE.MeshStandardMaterial | undefined;
@@ -76,6 +91,18 @@ function GloveModel({
       material.emissiveMap = null;
       material.roughnessMap = null;
       material.metalnessMap = null;
+      material.normalMap = null;
+      material.bumpMap = null;
+      material.displacementMap = null;
+
+      // Web/lace geometry is modeled as paper-thin, single-layer straps
+      // (that's how a woven basket pattern is built), and the GLB doesn't
+      // mark them double-sided. Three.js only renders the side the normal
+      // faces by default, so in a woven over/under pattern roughly half the
+      // strips get backface-culled from any given angle -- that's the black
+      // checkerboard look in the pocket. Rendering both sides fixes it
+      // regardless of which way an individual strip's normal points.
+      material.side = THREE.DoubleSide;
 
       material.color.set(hex);
       material.roughness = 0.65;
@@ -108,6 +135,7 @@ function GloveModel({
     setMaterialColor("material_logo", logoColor);
   }, [
     materials,
+    modelPath,
     outerPalmColor,
     outerThumbColor,
     outerIndexColor,
@@ -171,7 +199,9 @@ export default function Glove3DPreview(props: Glove3DPreviewProps) {
           intensity={1.3}
         />
 
-        <GloveModel {...props} />
+        <Suspense fallback={null}>
+          <GloveModel {...props} />
+        </Suspense>
 
         <OrbitControls
           enableZoom={true}

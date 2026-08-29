@@ -304,9 +304,17 @@ export default function BuildPage() {
 
                 <BuilderGroup title="Step 3 — Colors">
                   <Field label="Web Style">
-                    <div className="rounded-2xl border border-white bg-white px-4 py-3 font-medium text-black">
-                      {webStyle}
-                    </div>
+                    <WebStyleGrid
+                      options={webStyleOptionsByModel[model] ?? []}
+                      value={webStyle}
+                      onChange={setWebStyle}
+                    />
+
+                    <p className="mt-2 text-xs text-neutral-500">
+                      Changing the web style updates the glove
+                      shape. Every color you&apos;ve picked stays the
+                      same.
+                    </p>
                   </Field>
 
                   <ColorField label="Outer Palm Color" value={outerPalmColor} onChange={setOuterPalmColor} />
@@ -386,6 +394,7 @@ export default function BuildPage() {
 
               <div className="h-[380px] sm:h-[500px] lg:h-[620px]">
                 <Glove3DPreview
+                  webStyle={webStyle}
                   outerPalmColor={outerPalmColor}
                   outerThumbColor={outerThumbColor}
                   outerIndexColor={outerIndexColor}
@@ -410,6 +419,7 @@ export default function BuildPage() {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+                <PreviewChip label="Web Style" value={webStyle} />
                 <PreviewChip label="Outer Palm" value={outerPalmColor} />
                 <PreviewChip label="Outer Thumb" value={outerThumbColor} />
                 <PreviewChip label="Outer Index" value={outerIndexColor} />
@@ -548,6 +558,39 @@ function PreviewChip({
         {label}
       </p>
       <p className="mt-1 font-medium text-white">{value}</p>
+    </div>
+  );
+}
+
+function WebStyleGrid({
+  options,
+  value,
+  onChange,
+}: {
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {options.map((style) => {
+        const isActive = value === style;
+
+        return (
+          <button
+            key={style}
+            type="button"
+            onClick={() => onChange(style)}
+            className={`rounded-2xl border px-4 py-3 text-left text-sm font-medium transition ${
+              isActive
+                ? "border-white bg-white text-black"
+                : "border-neutral-700 bg-neutral-950 text-white hover:border-neutral-500"
+            }`}
+          >
+            {style}
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -45,12 +45,41 @@ export const startingColorOptions = [
 ];
 
 export const webStyleOptionsByModel: Record<string, string[]> = {
-  Fielder: ["I-Web", "H-Web", "Single Post", "Modified Trap"],
+  Fielder: [
+    "I-Web",
+    "H-Web",
+    "Single Post",
+    "Modified Trap",
+    "Cross Web",
+    "Basket Web",
+  ],
   "1B Open Back": ["1B Standard"],
   "1B Closed Back": ["1B Closed"],
   "Baseball Catcher": ["Closed Web", "Half Moon"],
   "Softball Catcher": ["Closed Web", "Half Moon"],
 };
+
+/*
+ * Most web styles are just a recolor of the same base glove mesh, so
+ * they share one GLB by default. A web style that needs different
+ * geometry (like Basket Web's woven pattern) gets its own GLB here,
+ * and the 3D preview swaps to it while keeping every other color
+ * choice the user already made.
+ *
+ * The default model itself (CrossWeb.glb) depicts a cross net, so
+ * "Cross Web" is listed explicitly too even though it just points at
+ * the same file as the default.
+ */
+export const defaultGloveModelPath = "/models/CrossWeb.glb";
+
+export const webStyleModelPaths: Record<string, string> = {
+  "Cross Web": "/models/CrossWeb.glb",
+  "Basket Web": "/models/BasketWeb.glb",
+};
+
+export function getGloveModelPath(webStyle: string) {
+  return webStyleModelPaths[webStyle] ?? defaultGloveModelPath;
+}
 
 export const laceColorOptions = [
   "Black",

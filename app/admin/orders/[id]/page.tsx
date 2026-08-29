@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import SiteHeader from "../../../components/SiteHeader";
 import { createClient } from "../../../../lib/supabase/server";
 import OrderStatusEditor from "./OrderStatusEditor";
+import DeleteOrderButton from "./DeleteOrderButton";
 
 type AdminOrderDetailPageProps = {
   params: Promise<{
@@ -332,6 +333,11 @@ export default async function AdminOrderDetailPage({
                   </div>
                 </div>
               </section>
+
+              <DeleteOrderButton
+                orderId={order.id}
+                orderNumber={order.order_number}
+              />
             </aside>
           </div>
         </div>

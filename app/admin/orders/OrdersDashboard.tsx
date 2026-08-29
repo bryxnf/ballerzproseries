@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 export type AdminOrder = {
@@ -34,10 +35,63 @@ const statusOptions = [
 ];
 
 export default function OrdersDashboard({
-  orders,
+  orders: initialOrders,
 }: OrdersDashboardProps) {
+  const router = useRouter();
+
+  const [orders, setOrders] = useState(initialOrders);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [deletingId, setDeletingId] = useState<number | null>(
+    null
+  );
+  const [deleteError, setDeleteError] = useState("");
+
+  async function handleDelete(order: AdminOrder) {
+    const confirmed = window.confirm(
+      `Delete order ${order.order_number}? This cannot be undone.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingId(order.id);
+      setDeleteError("");
+
+      const response = await fetch(
+        `/api/admin/orders/${order.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || "The order could not be deleted."
+        );
+      }
+
+      setOrders((currentOrders) =>
+        currentOrders.filter((item) => item.id !== order.id)
+      );
+
+      router.refresh();
+    } catch (error) {
+      console.error("Order delete error:", error);
+
+      setDeleteError(
+        error instanceof Error
+          ? error.message
+          : "The order could not be deleted."
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   const filteredOrders = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -195,6 +249,12 @@ export default function OrdersDashboard({
         </div>
       </section>
 
+      {deleteError ? (
+        <p className="mt-4 rounded-2xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+          {deleteError}
+        </p>
+      ) : null}
+
       <section className="mt-6">
         {filteredOrders.length > 0 ? (
           <>
@@ -268,12 +328,25 @@ export default function OrdersDashboard({
                       </td>
 
                       <td className="px-6 py-5 text-right">
-                        <Link
-                          href={`/admin/orders/${order.id}`}
-                          className="inline-flex rounded-xl bg-white px-4 py-2 font-semibold text-black transition hover:opacity-90"
-                        >
-                          View
-                        </Link>
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/admin/orders/${order.id}`}
+                            className="inline-flex rounded-xl bg-white px-4 py-2 font-semibold text-black transition hover:opacity-90"
+                          >
+                            View
+                          </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(order)}
+                            disabled={deletingId === order.id}
+                            className="inline-flex rounded-xl border border-red-800 bg-red-950/60 px-4 py-2 font-semibold text-red-300 transition hover:bg-red-900/60 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {deletingId === order.id
+                              ? "Deleting..."
+                              : "Delete"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -335,12 +408,25 @@ export default function OrdersDashboard({
                     />
                   </div>
 
-                  <Link
-                    href={`/admin/orders/${order.id}`}
-                    className="mt-5 block rounded-2xl bg-white px-5 py-3 text-center font-semibold text-black"
-                  >
-                    View Order
-                  </Link>
+                  <div className="mt-5 flex gap-3">
+                    <Link
+                      href={`/admin/orders/${order.id}`}
+                      className="flex-1 rounded-2xl bg-white px-5 py-3 text-center font-semibold text-black"
+                    >
+                      View Order
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(order)}
+                      disabled={deletingId === order.id}
+                      className="flex-1 rounded-2xl border border-red-800 bg-red-950/60 px-5 py-3 text-center font-semibold text-red-300 transition hover:bg-red-900/60 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {deletingId === order.id
+                        ? "Deleting..."
+                        : "Delete"}
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>

@@ -38,6 +38,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local source backups (created before risky feature changes)
+/backups/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
