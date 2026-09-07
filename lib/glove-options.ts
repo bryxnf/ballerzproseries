@@ -52,6 +52,8 @@ export const webStyleOptionsByModel: Record<string, string[]> = {
     "Modified Trap",
     "Cross Web",
     "Basket Web",
+    "Full Web",
+    "1-Piece Web",
   ],
   "1B Open Back": ["1B Standard"],
   "1B Closed Back": ["1B Closed"],
@@ -75,6 +77,9 @@ export const defaultGloveModelPath = "/models/CrossWeb.glb";
 export const webStyleModelPaths: Record<string, string> = {
   "Cross Web": "/models/CrossWeb.glb",
   "Basket Web": "/models/BasketWeb.glb",
+  "Full Web": "/models/FullWeb.glb",
+  "1-Piece Web": "/models/1-Piece.glb",
+  "I-Web": "/models/I-Web.glb",
 };
 
 export function getGloveModelPath(webStyle: string) {
@@ -107,6 +112,32 @@ export const embroideryColorOptions = [
   "Royal Blue",
   "Pink",
 ];
+
+export const embroideryLocationOptions = [
+  "Wrist Strap",
+  "Thumb",
+  "Index Finger",
+  "Middle Finger",
+  "Ring Finger",
+  "Pinky Finger",
+  "Back of Hand",
+];
+
+/*
+ * Maps a user-facing embroidery location to the named material on the
+ * glove GLB whose mesh the embroidery decal should be projected onto.
+ * These names match the material_* keys recolored in Glove3DPreview.tsx,
+ * so this stays valid across every web-style GLB without changes.
+ */
+export const embroideryLocationMaterialMap: Record<string, string> = {
+  "Wrist Strap": "material_wrist",
+  Thumb: "material_outerThumb",
+  "Index Finger": "material_outerIndex",
+  "Middle Finger": "material_outerMiddle",
+  "Ring Finger": "material_outerRing",
+  "Pinky Finger": "material_outerPinky",
+  "Back of Hand": "material_outerPalm",
+};
 
 export const panelColorOptions = [
   "Black",

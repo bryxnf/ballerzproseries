@@ -13,6 +13,7 @@ import {
   laceColorOptions,
   logoColorOptions,
   embroideryColorOptions,
+  embroideryLocationOptions,
   panelColorOptions,
   colorMap,
 } from "../../lib/glove-options";
@@ -80,6 +81,9 @@ export default function BuildPage() {
   const [webStyle, setWebStyle] = useState("I-Web");
   const [embroideryText, setEmbroideryText] = useState("");
   const [embroideryColor, setEmbroideryColor] = useState("White");
+  const [embroideryLocation, setEmbroideryLocation] = useState(
+    embroideryLocationOptions[0]
+  );
 
   const [outerPalmColor, setOuterPalmColor] = useState("White");
   const [outerThumbColor, setOuterThumbColor] = useState("White");
@@ -163,6 +167,10 @@ export default function BuildPage() {
 
         embroideryColor: canAddEmbroidery
           ? embroideryColor
+          : "Not Available",
+
+        embroideryLocation: canAddEmbroidery
+          ? embroideryLocation
           : "Not Available",
       };
 
@@ -345,6 +353,14 @@ export default function BuildPage() {
                 <BuilderGroup title="Step 4 — Personalization">
                   {canAddEmbroidery ? (
                     <>
+                      <Field label="Embroidery Location">
+                        <WebStyleGrid
+                          options={embroideryLocationOptions}
+                          value={embroideryLocation}
+                          onChange={setEmbroideryLocation}
+                        />
+                      </Field>
+
                       <Field label="Embroidery Text">
                         <input
                           type="text"
@@ -356,6 +372,11 @@ export default function BuildPage() {
                           placeholder="Enter name or word"
                           className="w-full rounded-2xl border border-neutral-700 bg-black px-4 py-3 outline-none"
                         />
+
+                        <p className="mt-2 text-xs text-neutral-500">
+                          Watch the preview on the right — it updates
+                          as you type.
+                        </p>
                       </Field>
 
                       <Field label="Embroidery Color">
@@ -415,6 +436,9 @@ export default function BuildPage() {
                   patchColor={patchColor}
                   palmLogoColor={palmLogoColor}
                   logoColor={logoColor}
+                  embroideryText={canAddEmbroidery ? embroideryText : ""}
+                  embroideryColor={embroideryColor}
+                  embroideryLocation={embroideryLocation}
                 />
               </div>
 
@@ -450,6 +474,11 @@ export default function BuildPage() {
                     <PreviewChip
                       label="Embroidery Color"
                       value={embroideryText ? embroideryColor : "None"}
+                    />
+
+                    <PreviewChip
+                      label="Embroidery Location"
+                      value={embroideryText ? embroideryLocation : "None"}
                     />
                   </>
                 ) : null}
