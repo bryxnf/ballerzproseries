@@ -207,6 +207,15 @@ function GloveModel({
       return;
     }
 
+    // Read the now-guaranteed-non-null value into a `const` here. `targetMesh`
+    // above is a `let` reassigned inside the scene.traverse() closure, and
+    // TypeScript's control-flow narrowing can lose track of it across that
+    // closure boundary -- some TS versions narrow every later use of
+    // `targetMesh` in this effect to `never`, which fails `tsc`/`next build`
+    // even though the value is provably a Mesh at this point. A `const` that
+    // is never reassigned again sidesteps that entirely.
+    const targetMeshFound: THREE.Mesh = targetMesh;
+
     try {
 
     // Make sure every matrixWorld in the hierarchy (including whatever
@@ -218,7 +227,7 @@ function GloveModel({
     const overallCenter = overallBox.getCenter(new THREE.Vector3());
     const overallSize = overallBox.getSize(new THREE.Vector3());
 
-    const targetBox = new THREE.Box3().setFromObject(targetMesh);
+    const targetBox = new THREE.Box3().setFromObject(targetMeshFound);
     const targetCenter = targetBox.getCenter(new THREE.Vector3());
     const targetSize = targetBox.getSize(new THREE.Vector3());
 
@@ -238,7 +247,7 @@ function GloveModel({
     const rayDirection = outward.clone().negate();
 
     const raycaster = new THREE.Raycaster(rayOrigin, rayDirection);
-    const hits = raycaster.intersectObject(targetMesh, false);
+    const hits = raycaster.intersectObject(targetMeshFound, false);
 
     let hitPoint: THREE.Vector3;
     let hitNormal: THREE.Vector3;
@@ -247,7 +256,7 @@ function GloveModel({
       hitPoint = hits[0].point;
       hitNormal = hits[0].face.normal
         .clone()
-        .transformDirection(targetMesh.matrixWorld)
+        .transformDirection(targetMeshFound.matrixWorld)
         .normalize();
     } else {
       console.warn(
@@ -263,8 +272,8 @@ function GloveModel({
     // axis, converted to a world-space direction -- rather than
     // assuming a fixed world axis, so this works the same way for a
     // long finger, a short knuckle strap, or a wide wrist strap.
-    targetMesh.geometry.computeBoundingBox();
-    const localBox = targetMesh.geometry.boundingBox ?? new THREE.Box3();
+    targetMeshFound.geometry.computeBoundingBox();
+    const localBox = targetMeshFound.geometry.boundingBox ?? new THREE.Box3();
     const localSize = localBox.getSize(new THREE.Vector3());
 
     let longAxisLocal: THREE.Vector3;
@@ -277,7 +286,7 @@ function GloveModel({
     }
     const alongWorld = longAxisLocal
       .clone()
-      .transformDirection(targetMesh.matrixWorld)
+      .transformDirection(targetMeshFound.matrixWorld)
       .normalize();
 
     // Build the decal's own coordinate frame directly (instead of
@@ -328,12 +337,12 @@ function GloveModel({
     const recenterHits = new THREE.Raycaster(
       recenteredOrigin,
       outward.clone().negate()
-    ).intersectObject(targetMesh, false);
+    ).intersectObject(targetMeshFound, false);
     if (recenterHits.length > 0 && recenterHits[0].face) {
       hitPoint = recenterHits[0].point;
       hitNormal = recenterHits[0].face.normal
         .clone()
-        .transformDirection(targetMesh.matrixWorld)
+        .transformDirection(targetMeshFound.matrixWorld)
         .normalize();
     }
 
@@ -378,7 +387,7 @@ function GloveModel({
       decalDepth / 2
     );
 
-    const geometry = new DecalGeometry(targetMesh, hitPoint, orientation, decalSize);
+    const geometry = new DecalGeometry(targetMeshFound, hitPoint, orientation, decalSize);
 
     // Render the embroidery text onto a canvas, then use that as the
     // decal's texture. A dark stroke behind the fill mimics a stitched
