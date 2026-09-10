@@ -54,6 +54,7 @@ export const webStyleOptionsByModel: Record<string, string[]> = {
     "Basket Web",
     "Full Web",
     "1-Piece Web",
+    "I-WebLogo",
   ],
   "1B Open Back": ["1B Standard"],
   "1B Closed Back": ["1B Closed"],
@@ -80,6 +81,8 @@ export const webStyleModelPaths: Record<string, string> = {
   "Full Web": "/models/FullWeb.glb",
   "1-Piece Web": "/models/1-Piece.glb",
   "I-Web": "/models/I-Web.glb",
+  "H-Web": "/models/H-Web.glb",
+  "I-WebLogo": "/models/I-WebLogo.glb",
 };
 
 export function getGloveModelPath(webStyle: string) {
