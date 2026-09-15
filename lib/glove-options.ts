@@ -48,14 +48,15 @@ export const webStyleOptionsByModel: Record<string, string[]> = {
   Fielder: [
     "I-Web",
     "H-Web",
-    "Single Post",
-    "Modified Trap",
     "Cross Web",
     "Basket Web",
     "Full Web",
     "1-Piece Web",
     "I-WebLogo",
     "V-Web",
+    "Modified Cross Web",
+    "Net Web",
+    "Laced H-Web",
   ],
   "1B Open Back": ["1B Standard"],
   "1B Closed Back": ["1B Closed"],
@@ -85,6 +86,9 @@ export const webStyleModelPaths: Record<string, string> = {
   "H-Web": "/models/H-Web.glb",
   "I-WebLogo": "/models/I-WebLogo.glb",
   "V-Web": "/models/V-Web.glb",
+  "Modified Cross Web": "/models/ModCrossWeb.glb",
+  "Net Web": "/models/NetWeb.glb",
+  "Laced H-Web": "/models/LacedH-Web.glb",
 };
 
 export function getGloveModelPath(webStyle: string) {
