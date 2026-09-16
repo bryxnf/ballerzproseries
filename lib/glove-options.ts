@@ -57,6 +57,8 @@ export const webStyleOptionsByModel: Record<string, string[]> = {
     "Modified Cross Web",
     "Net Web",
     "Laced H-Web",
+    "Laced Cross Web",
+    "Diamond Web",
   ],
   "1B Open Back": ["1B Standard"],
   "1B Closed Back": ["1B Closed"],
@@ -89,6 +91,9 @@ export const webStyleModelPaths: Record<string, string> = {
   "Modified Cross Web": "/models/ModCrossWeb.glb",
   "Net Web": "/models/NetWeb.glb",
   "Laced H-Web": "/models/LacedH-Web.glb",
+  "Laced Cross Web": "/models/LaceCross.glb",
+  "Diamond Web": "/models/DiamondWeb.glb",
+  
 };
 
 export function getGloveModelPath(webStyle: string) {
