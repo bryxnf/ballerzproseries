@@ -59,6 +59,7 @@ export const webStyleOptionsByModel: Record<string, string[]> = {
     "Laced H-Web",
     "Laced Cross Web",
     "Diamond Web",
+    "2-Piece Web",
   ],
   "1B Open Back": ["1B Standard"],
   "1B Closed Back": ["1B Closed"],
@@ -93,6 +94,8 @@ export const webStyleModelPaths: Record<string, string> = {
   "Laced H-Web": "/models/LacedH-Web.glb",
   "Laced Cross Web": "/models/LaceCross.glb",
   "Diamond Web": "/models/DiamondWeb.glb",
+  "2-Piece Web": "/models/2Piece.glb",
+
   
 };
 
